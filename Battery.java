@@ -19,6 +19,18 @@ public class Battery {
 		
 	}
 	
+	public double getBatteryLevel() {
+		return batteryLevel;
+	}
+
+	public String getBatteryType() {
+		return batteryType;
+	}
+
+	public double getConsumption() {
+		return consumption;
+	}
+	
 	public void initializeMetrics() {
 		
 		
