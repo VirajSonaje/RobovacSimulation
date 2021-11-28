@@ -18,12 +18,12 @@ public class Robovac extends ViewableDigraph{
 		super(name);
 		// TODO Auto-generated constructor stub
 		
-		ViewableAtomic lidar = new Lidar("LiDAR");
-		ViewableAtomic IR = new DustGenerator("IR");
-		ViewableAtomic CU = new ControlUnit("ECU");
-		ViewableAtomic suction = new SuctionPump("Suction");
-		ViewableAtomic wheeels = new ControlUnit("Wheels");
-		ViewableAtomic tx = new transducer("transducer", 2600, 2600);
+		ViewableAtomic lidar = new Lidar("LiDAR", 625);// 5
+		ViewableAtomic IR = new DustGenerator("IR", 20);//mA 3
+		ViewableAtomic CU = new ControlUnit("ECU", 50);//mA 1
+		ViewableAtomic suction = new SuctionPump("Suction", 7000);// 10
+		ViewableAtomic wheeels = new ControlUnit("Wheels", 900); // 2 sec 
+		ViewableAtomic tx = new transducer("transducer", 2600, 2600, 20);
 
 		add(lidar);
 		add(IR);

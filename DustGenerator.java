@@ -2,6 +2,7 @@ package Component.RobovacSimulation;
 
 import java.util.Random;
 
+import GenCol.doubleEnt;
 import GenCol.entity;
 import model.modeling.content;
 import model.modeling.message;
@@ -12,13 +13,14 @@ public class DustGenerator extends ViewableAtomic {
 	int arrTime; 
 	boolean dust = true;
 	Random rd = new Random();
+	double consumptionMetric;
 	
 	public DustGenerator() {
-		this("DustGenerator");
+		this("DustGenerator",10);
 		// TODO Auto-generated constructor stub
 	}
 
-	public DustGenerator(String name) {
+	public DustGenerator(String name, double consumption) {
 		super(name);
 		// TODO Auto-generated constructor stub
 		arrTime = 10;
@@ -30,6 +32,7 @@ public class DustGenerator extends ViewableAtomic {
 		addTestInput("Start", new entity("start"));
 		addTestInput("Stop", new entity("stop"));
 		
+		this.consumptionMetric = consumption;
 	}
 
 	@Override
@@ -86,9 +89,11 @@ public class DustGenerator extends ViewableAtomic {
 		else {
 			con = makeContent("Out", new entity("no dust"));	
 		}
-			
-		
 		m.add(con);
+		con = makeContent("Consumption", new doubleEnt(consumptionMetric*(3/3600)));
+		m.add(con);	
+		
+		
 		return m;
 	}
 

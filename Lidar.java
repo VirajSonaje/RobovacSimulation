@@ -1,22 +1,28 @@
 package Component.RobovacSimulation;
 
+import GenCol.doubleEnt;
+import model.modeling.content;
 import model.modeling.message;
 import view.modeling.ViewableAtomic;
 
 public class Lidar extends ViewableAtomic {
+	
+	double consumptionMetric;
 
 	public Lidar() {
-		this("LiDAR");
+		this("LiDAR",20);
 		// TODO Auto-generated constructor stub
 	}
 
-	public Lidar(String name) {
+	public Lidar(String name, double consumption) {
 		super(name);
 		// TODO Auto-generated constructor stub
 		
 		addInport("In");
 		addOutport("Out");
 		addOutport("Consumption");
+		
+		this.consumptionMetric = consumption;
 	}
 	
 	@Override
@@ -44,7 +50,11 @@ public class Lidar extends ViewableAtomic {
 	@Override
 	public message out() {
 		// TODO Auto-generated method stub
-		return super.out();
+		message m = new message();
+		content con = makeContent("Consumption", new doubleEnt(consumptionMetric*(5/3600)));
+		m.add(con);
+		
+		return m;
 	}
 	
 	

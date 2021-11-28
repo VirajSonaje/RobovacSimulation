@@ -8,12 +8,14 @@ import view.modeling.ViewableAtomic;
 
 public class SuctionPump extends ViewableAtomic{
 
+	double consumptionMetric;
+	
 	public SuctionPump() {
-		this("SuctionPump");
+		this("SuctionPump",20);
 		// TODO Auto-generated constructor stub
 	}
 
-	public SuctionPump(String name) {
+	public SuctionPump(String name, double consumption) {
 		super(name);
 		// TODO Auto-generated constructor stub
 		
@@ -22,6 +24,8 @@ public class SuctionPump extends ViewableAtomic{
 		addOutport("Consumption");
 		
 		addTestInput("In", new entity("1"));
+		
+		this.consumptionMetric = consumption;
 	}
 
 	@Override
@@ -49,8 +53,7 @@ public class SuctionPump extends ViewableAtomic{
 		super.deltext(e, x);
 		
 		for(int i=0;i<x.getLength();i++) {
-			holdIn("Active", 5); // need to see how much time.
-			//calculaiton on power consumption.
+			holdIn("Active", 10);
 		}
 		
 	}
@@ -62,7 +65,7 @@ public class SuctionPump extends ViewableAtomic{
 		message m = new message();
 		content con = makeContent("Out", new entity("cleaned"));
 		m.add(con);
-		con = makeContent("Consumption", new doubleEnt(5)); // need to calculate consumption
+		con = makeContent("Consumption", new doubleEnt(consumptionMetric*(10/3600)));
 		m.add(con);
 		return m;
 	}

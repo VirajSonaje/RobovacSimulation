@@ -1,16 +1,20 @@
 package Component.RobovacSimulation;
 
+import GenCol.doubleEnt;
+import model.modeling.content;
 import model.modeling.message;
 import view.modeling.ViewableAtomic;
 
 public class ControlUnit extends ViewableAtomic{
 
+	double consumptionMetric;
+	
 	public ControlUnit() {
-		this("ECU");
+		this("ECU", 50);
 		// TODO Auto-generated constructor stub
 	}
 
-	public ControlUnit(String name) {
+	public ControlUnit(String name, double consumption) {
 		super(name);
 		// TODO Auto-generated constructor stub
 		
@@ -18,6 +22,8 @@ public class ControlUnit extends ViewableAtomic{
 		addOutport("Clean");
 		addOutport("Move");
 		addOutport("Consumption");
+
+		this.consumptionMetric = consumption;
 	}
 	
 	@Override
@@ -40,6 +46,12 @@ public class ControlUnit extends ViewableAtomic{
 	public void deltext(double e, message x) {
 		// TODO Auto-generated method stub
 		super.deltext(e, x);
+		Continue(e);
+		for(int i=0;i<x.getLength();i++) {
+			
+		}
+		
+		
 	}
 
 	@Override
@@ -51,7 +63,10 @@ public class ControlUnit extends ViewableAtomic{
 	@Override
 	public message out() {
 		// TODO Auto-generated method stub
-		return super.out();
+		message m = new message();
+		content con = makeContent("Consumption", new doubleEnt(consumptionMetric/3600));
+		m.add(con);
+		return m;
 	}
 	
 	
