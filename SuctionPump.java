@@ -9,7 +9,7 @@ import view.modeling.ViewableAtomic;
 public class SuctionPump extends ViewableAtomic{
 
 	public SuctionPump() {
-		this("Suction Pump");
+		this("SuctionPump");
 		// TODO Auto-generated constructor stub
 	}
 

@@ -25,7 +25,7 @@ public class DustGenerator extends ViewableAtomic {
 		addOutport("Out");
 		addInport("Stop");
 		addInport("Start");
-		
+		addOutport("Consumption");
 		
 		addTestInput("Start", new entity("start"));
 		addTestInput("Stop", new entity("stop"));

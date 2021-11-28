@@ -1,5 +1,8 @@
 package Component.RobovacSimulation;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import GenCol.Queue;
 import GenCol.entity;
 import model.modeling.message;
@@ -9,28 +12,24 @@ public class transducer extends ViewableAtomic {
 	
 	double clock =0;
 	Queue<String> operations = new Queue<String>();
-	Battery b1, b2;
+	Map<String, Double> b1, b2;
 	
 	public transducer() {
-		this("transducer");
+		this("transducer", 2600, 2600);
 	}
 	
-	public transducer(String  name) {
+	public transducer(String name, double b1Cap, double b2Cap) {
 		super(name);
-		addOutport("Battery1");
-		addOutport("Battery2");
-		addInport("Start");
-		addInport("Stop");
+		
+		addOutport("Out");
 		addInport("In");
-		
-		addTestInput("Start", new entity("start"));
-		addTestInput("Stop", new entity("stop"));
-		addTestInput("Battery1", new entity("val"));
-		addTestInput("Battery2", new entity("val"));
-		
-		b1 = new Battery("Li-ion");
-		b2 = new Battery("NiCa");
 
+		b1 = new HashMap<String, Double>();
+		b1.put("level", (double) 100);
+		b1.put("mAh", b1Cap);
+		b1.put("efficiency", (double) 90);
+		b1.put("Consumption", 0.0);
+		
 	}
 
 	@Override
@@ -77,8 +76,8 @@ public class transducer extends ViewableAtomic {
 	
 	private void show_state() {
 		// TODO Auto-generated method stub
-		System.out.println("Current battery Level for "+ b1.getBatteryType() +": " + b1.getBatteryLevel());
-		System.out.println("Current battery Level for "+ b2.getBatteryType() +": " + b2.getBatteryLevel());
+		System.out.println("Current battery Level for battery 1: " + b1.get("level"));
+		System.out.println("Current battery Level for battery 2: " + b2.get("level"));
 	}
 	
 

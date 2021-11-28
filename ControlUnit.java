@@ -1,65 +1,60 @@
 package Component.RobovacSimulation;
 
-import GenCol.Pair;
 import model.modeling.message;
 import view.modeling.ViewableAtomic;
 
-public class Wheel extends ViewableAtomic {
+public class ControlUnit extends ViewableAtomic{
 
-	public Wheel() {
-		this("wheels");
+	public ControlUnit() {
+		this("ECU");
 		// TODO Auto-generated constructor stub
 	}
 
-	public Wheel(String name) {
+	public ControlUnit(String name) {
 		super(name);
 		// TODO Auto-generated constructor stub
 		
 		addInport("In");
+		addOutport("Clean");
+		addOutport("Move");
 		addOutport("Consumption");
-		
 	}
-
+	
 	@Override
 	public void initialize() {
 		// TODO Auto-generated method stub
 		super.initialize();
 		
-		phase = "Passive";
 		sigma = INFINITY;
+		phase = "Passive";
+		
 	}
 
 	@Override
 	public void deltint() {
 		// TODO Auto-generated method stub
 		super.deltint();
-		passivate();
-		
-		
 	}
 
 	@Override
 	public void deltext(double e, message x) {
 		// TODO Auto-generated method stub
 		super.deltext(e, x);
-		Continue(e);
-		for(int i=0;i<x.getLength();i++) {
-			Pair<String, Double> task = (Pair<String, Double>)x.getValOnPort("In", i);
-			holdIn(task.key, task.value);
-		}
-		
 	}
 
-	
+	@Override
+	public void deltcon(double e, message x) {
+		// TODO Auto-generated method stub
+		super.deltcon(e, x);
+	}
+
 	@Override
 	public message out() {
 		// TODO Auto-generated method stub
-		
-		/// write code for power consumption *******
-		
 		return super.out();
 	}
+	
+	
+	
 
-	
-	
 }
