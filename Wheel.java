@@ -61,7 +61,7 @@ public class Wheel extends ViewableAtomic {
 		// TODO Auto-generated method stub
 		
 		message m = new message();
-		content con = makeContent("Out", new doubleEnt(consumptionMetric*(sigma/3600)));
+		content con = makeContent("Out", new doubleEnt(consumptionMetric*2));
 		m.add(con);
 		
 		return m;

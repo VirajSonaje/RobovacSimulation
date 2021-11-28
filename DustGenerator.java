@@ -23,7 +23,7 @@ public class DustGenerator extends ViewableAtomic {
 	public DustGenerator(String name, double consumption) {
 		super(name);
 		// TODO Auto-generated constructor stub
-		arrTime = 10;
+		arrTime = 3;
 		addOutport("Out");
 		addInport("Stop");
 		addInport("Start");
@@ -48,7 +48,7 @@ public class DustGenerator extends ViewableAtomic {
 	@Override
 	public void deltint() {
 		// TODO Auto-generated method stub
-		super.deltint();
+		//super.deltint();
 		if(phaseIs("Active")) {
 			holdIn("Active", arrTime);
 			dust = rd.nextBoolean();
@@ -58,7 +58,7 @@ public class DustGenerator extends ViewableAtomic {
 	@Override
 	public void deltext(double e, message x) {
 		// TODO Auto-generated method stub
-		super.deltext(e, x);
+		//super.deltext(e, x);
 		
 		if(phaseIs("Passive")) {
 			for(int i=0; i<x.getLength(); i++) {
@@ -71,7 +71,9 @@ public class DustGenerator extends ViewableAtomic {
 		else {
 			for(int i=0; i<x.getLength(); i++) {
 				if(messageOnPort(x, "Stop", i)) {
-					holdIn("Passive", INFINITY);
+					if(x.getValOnPort("Stop", i).getName().equals("stop")) {
+						holdIn("Passive", INFINITY);	
+					}
 				}
 			}	
 		}
@@ -90,7 +92,7 @@ public class DustGenerator extends ViewableAtomic {
 			con = makeContent("Out", new entity("no dust"));	
 		}
 		m.add(con);
-		con = makeContent("Consumption", new doubleEnt(consumptionMetric*(3/3600)));
+		con = makeContent("Consumption", new doubleEnt(consumptionMetric*(3)));
 		m.add(con);	
 		
 		

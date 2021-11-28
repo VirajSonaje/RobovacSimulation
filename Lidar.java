@@ -18,7 +18,8 @@ public class Lidar extends ViewableAtomic {
 		super(name);
 		// TODO Auto-generated constructor stub
 		
-		addInport("In");
+		addInport("Start");
+		addInport("Stop");
 		addOutport("Out");
 		addOutport("Consumption");
 		
@@ -51,7 +52,7 @@ public class Lidar extends ViewableAtomic {
 	public message out() {
 		// TODO Auto-generated method stub
 		message m = new message();
-		content con = makeContent("Consumption", new doubleEnt(consumptionMetric*(5/3600)));
+		content con = makeContent("Consumption", new doubleEnt(consumptionMetric*(5)));
 		m.add(con);
 		
 		return m;

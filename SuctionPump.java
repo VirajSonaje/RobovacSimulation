@@ -65,7 +65,7 @@ public class SuctionPump extends ViewableAtomic{
 		message m = new message();
 		content con = makeContent("Out", new entity("cleaned"));
 		m.add(con);
-		con = makeContent("Consumption", new doubleEnt(consumptionMetric*(10/3600)));
+		con = makeContent("Consumption", new doubleEnt(consumptionMetric*(10)));
 		m.add(con);
 		return m;
 	}
