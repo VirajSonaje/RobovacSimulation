@@ -1,29 +1,22 @@
 package Component.RobovacSimulation;
 
-import GenCol.Pair;
-import GenCol.doubleEnt;
-import GenCol.entity;
-import model.modeling.content;
 import model.modeling.message;
 import view.modeling.ViewableAtomic;
+import view.modeling.ViewableDigraph;
 
-public class Wheel extends ViewableAtomic {
+public class GridGenerator extends ViewableAtomic{
 
-	double consumptionMetric;
-	
-	public Wheel() {
-		this("wheels",30);
+	public GridGenerator() {
+		super();
 		// TODO Auto-generated constructor stub
 	}
 
-	public Wheel(String name, double consumption) {
+	public GridGenerator(String name) {
 		super(name);
 		// TODO Auto-generated constructor stub
 		
 		addInport("In");
-		addOutport("Consumption");
-		
-		this.consumptionMetric = consumption;
+		addOutport("Out");
 	}
 
 	@Override
@@ -33,41 +26,27 @@ public class Wheel extends ViewableAtomic {
 		
 		phase = "Passive";
 		sigma = INFINITY;
+		
 	}
 
 	@Override
 	public void deltint() {
 		// TODO Auto-generated method stub
 		super.deltint();
-		passivate();
-		
-		
 	}
 
 	@Override
 	public void deltext(double e, message x) {
 		// TODO Auto-generated method stub
 		super.deltext(e, x);
-		Continue(e);
-		for(int i=0;i<x.getLength();i++) {
-			entity task = x.getValOnPort("In", i);
-			holdIn(task.getName(), 2);
-		}
-		
 	}
 
-	
 	@Override
 	public message out() {
 		// TODO Auto-generated method stub
-		
-		message m = new message();
-		content con = makeContent("Out", new doubleEnt(consumptionMetric*2));
-		m.add(con);
-		
-		return m;
+		return super.out();
 	}
+	
+	
 
-	
-	
 }

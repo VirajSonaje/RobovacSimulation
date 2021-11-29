@@ -1,5 +1,14 @@
 package Component.RobovacSimulation;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
+
+import GenCol.Bag;
+import GenCol.Pair;
 import GenCol.doubleEnt;
 import GenCol.entity;
 import model.modeling.content;
@@ -10,6 +19,11 @@ public class ControlUnit extends ViewableAtomic{
 
 	double consumptionMetric;
 	boolean suction =false, move =false;
+	String direction = "";
+	int index =1;
+	Set<Pair<Integer,Pair<Integer, Integer>>> pathSet;
+	Iterator<Pair<Integer, Pair<Integer, Integer>>> giter;
+	Pair<Integer,Pair<Integer, Integer>> prev = new Pair<Integer,Pair<Integer, Integer>> (0,new Pair<Integer,Integer>(0, 0));
 	
 	public ControlUnit() {
 		this("ECU", 50);
@@ -43,7 +57,54 @@ public class ControlUnit extends ViewableAtomic{
 	public void deltint() {
 		// TODO Auto-generated method stub
 		super.deltint();
-		passivate();
+		//passivate();
+		if(move) {
+			if(giter.hasNext()) {
+				Pair<Integer,Pair<Integer, Integer>> cur = giter.next();
+				System.out.println(cur);
+				int pri = cur.value.key - prev.value.key;
+				int sec = cur.value.value - prev.value.value;
+				if(pri == 0 && sec == 1) {
+					direction = "East";
+				}
+				else if(pri == 0 && sec == -1) {
+					direction = "West";
+				}
+				else if(pri == 1 && sec == 0) {
+					direction = "South";
+				}
+				else if(pri == -1 && sec == 0) {
+					direction = "North";
+				}
+				else if(pri == 1 && sec == 1) {
+					direction = "SouthEast";
+				}
+				else if(pri == -1 && sec == 1) {
+					direction = "NorthEast";
+				}
+				else if(pri == -1 && sec == -1) {
+					direction = "NorthWest";
+				}
+				else if(pri == 1 && sec == -1) {
+					direction = "SouthWest";
+				}
+				else {
+					direction = "Start";
+				}
+				prev = cur;
+			}
+			else{
+				move = false;
+				passivate();
+			}
+		}
+		
+		
+		if(suction) {
+			suction = false;
+			passivate();
+		}
+		
 	}
 
 	@Override
@@ -62,6 +123,67 @@ public class ControlUnit extends ViewableAtomic{
 				}
 				
 			}
+			if(messageOnPort(x, "LiDARin", i)) {
+				Bag<Pair<Integer,Pair<Integer, Integer>>> path = (Bag<Pair<Integer,Pair<Integer, Integer>>> )x.getValOnPort("LiDARin", i);
+				System.out.println(path);
+				
+				if(index<path.size()) {
+					move = true;
+//					path.bag
+					pathSet = path.bag2Set();
+					
+//					List list = new ArrayList(pathSet);
+//					Collections.reverse(list);
+//					pathSet = new LinkedHashSet(list);
+					
+					System.out.println(pathSet);
+					
+					giter = pathSet.iterator();
+					
+					
+					Pair<Integer,Pair<Integer,Integer>> cur = giter.next();
+					
+					System.out.println(cur);
+					
+			
+					int pri = cur.value.key - prev.value.key;
+					int sec = cur.value.value - prev.value.value;
+					if(pri == 0 && sec == 1) {
+						direction = "East";
+					}
+					else if(pri == 0 && sec == -1) {
+						direction = "West";
+					}
+					else if(pri == 1 && sec == 0) {
+						direction = "South";
+					}
+					else if(pri == -1 && sec == 0) {
+						direction = "North";
+					}
+					else if(pri == 1 && sec == 1) {
+						direction = "SouthEast";
+					}
+					else if(pri == -1 && sec == 1) {
+						direction = "NorthEast";
+					}
+					else if(pri == -1 && sec == -1) {
+						direction = "NorthWest";
+					}
+					else if(pri == 1 && sec == -1) {
+						direction = "SouthWest";
+					}
+					else {
+						direction = "Start";
+					}
+					prev = cur;
+					
+						
+					//}
+				}
+				
+				
+			}
+			
 			
 			holdIn("Active", 1);
 			
@@ -87,7 +209,8 @@ public class ControlUnit extends ViewableAtomic{
 			m.add(con);
 		}
 		if(move) {
-			con = makeContent("Move", new entity("")); // need to figure out 
+			con = makeContent("Move", new entity(direction));
+			m.add(con);
 		}
 		con = makeContent("Consumption", new doubleEnt(consumptionMetric));
 		m.add(con);

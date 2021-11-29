@@ -50,8 +50,8 @@ public class SuctionPump extends ViewableAtomic{
 	@Override
 	public void deltext(double e, message x) {
 		// TODO Auto-generated method stub
-		super.deltext(e, x);
-		
+		//super.deltext(e, x);
+		Continue(e);
 		for(int i=0;i<x.getLength();i++) {
 			holdIn("Active", 10);
 		}
