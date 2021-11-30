@@ -25,12 +25,10 @@ public class DustGenerator extends ViewableAtomic {
 		// TODO Auto-generated constructor stub
 		arrTime = 3;
 		addOutport("Out");
-		addInport("Stop");
 		addInport("Start");
 		addOutport("Consumption");
 		
 		addTestInput("Start", new entity("start"));
-		addTestInput("Stop", new entity("stop"));
 		
 		this.consumptionMetric = consumption;
 	}
@@ -49,10 +47,11 @@ public class DustGenerator extends ViewableAtomic {
 	public void deltint() {
 		// TODO Auto-generated method stub
 		//super.deltint();
-		if(phaseIs("Active")) {
-			holdIn("Active", arrTime);
-			dust = rd.nextBoolean();
-		}
+//		if(phaseIs("Active")) {
+//			holdIn("Active", arrTime);
+//			dust = rd.nextBoolean();
+//		}
+		holdIn("Passive", INFINITY);
 	}
 
 	@Override
@@ -63,19 +62,10 @@ public class DustGenerator extends ViewableAtomic {
 		if(phaseIs("Passive")) {
 			for(int i=0; i<x.getLength(); i++) {
 				if(messageOnPort(x, "Start", i)) {
-					holdIn("Active", arrTime);
+					holdIn("Sensing", arrTime);
 					dust = rd.nextBoolean();
 				}
 			}
-		}
-		else {
-			for(int i=0; i<x.getLength(); i++) {
-				if(messageOnPort(x, "Stop", i)) {
-					if(x.getValOnPort("Stop", i).getName().equals("stop")) {
-						holdIn("Passive", INFINITY);	
-					}
-				}
-			}	
 		}
 		
 	}

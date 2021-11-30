@@ -18,7 +18,7 @@ import view.modeling.ViewableAtomic;
 public class ControlUnit extends ViewableAtomic{
 
 	double consumptionMetric;
-	boolean suction =false, move =false;
+	boolean suction =false, move =false, getDirt = false;
 	String direction = "";
 	int index =1;
 	Set<Pair<Integer,Pair<Integer, Integer>>> pathSet;
@@ -38,6 +38,7 @@ public class ControlUnit extends ViewableAtomic{
 		addInport("IRin");
 		addOutport("Clean");
 		addOutport("Move");
+		addOutport("askIR");
 		addOutport("Consumption");
 
 		this.consumptionMetric = consumption;
@@ -59,50 +60,20 @@ public class ControlUnit extends ViewableAtomic{
 		super.deltint();
 		//passivate();
 		if(move) {
-			if(giter.hasNext()) {
-				Pair<Integer,Pair<Integer, Integer>> cur = giter.next();
-				System.out.println(cur);
-				int pri = cur.value.key - prev.value.key;
-				int sec = cur.value.value - prev.value.value;
-				if(pri == 0 && sec == 1) {
-					direction = "East";
-				}
-				else if(pri == 0 && sec == -1) {
-					direction = "West";
-				}
-				else if(pri == 1 && sec == 0) {
-					direction = "South";
-				}
-				else if(pri == -1 && sec == 0) {
-					direction = "North";
-				}
-				else if(pri == 1 && sec == 1) {
-					direction = "SouthEast";
-				}
-				else if(pri == -1 && sec == 1) {
-					direction = "NorthEast";
-				}
-				else if(pri == -1 && sec == -1) {
-					direction = "NorthWest";
-				}
-				else if(pri == 1 && sec == -1) {
-					direction = "SouthWest";
-				}
-				else {
-					direction = "Start";
-				}
-				prev = cur;
-			}
-			else{
-				move = false;
-				passivate();
-			}
+			move = false;
+			holdIn("Move", INFINITY);
+		}
+		
+
+		if(getDirt) {
+			getDirt = false;
+			holdIn("CheckDirt", INFINITY);
 		}
 		
 		
 		if(suction) {
-			suction = false;
-			passivate();
+			//suction = false;
+			holdIn("Move", INFINITY);
 		}
 		
 	}
@@ -117,35 +88,47 @@ public class ControlUnit extends ViewableAtomic{
 				String val = x.getValOnPort("IRin", i).getName();
 				if(val.startsWith("no")) {
 					suction = false;
+					move = true;
+				}
+				else if(val.equals("reached")){
+					getDirt = true;
+					holdIn("CheckDirt", 1);
 				}
 				else {
 					suction = true;
+					holdIn("Clean", 1);
 				}
 				
 			}
-			if(messageOnPort(x, "LiDARin", i)) {
-				Bag<Pair<Integer,Pair<Integer, Integer>>> path = (Bag<Pair<Integer,Pair<Integer, Integer>>> )x.getValOnPort("LiDARin", i);
-				System.out.println(path);
-				
-				if(index<path.size()) {
-					move = true;
-//					path.bag
+			if(messageOnPort(x, "LiDARin", i) || move) {
+				if(suction) {
+					suction =false;
+				}
+				else if(!move) {
+					//System.out.println(x.getValOnPort("LiDARin", i));
+					Bag<Pair<Integer,Pair<Integer, Integer>>> path = (Bag<Pair<Integer,Pair<Integer, Integer>>> )x.getValOnPort("LiDARin", i);	
+					//System.out.println(path);
 					pathSet = path.bag2Set();
-					
+					getDirt =true;
+					giter = pathSet.iterator();
+				}
+				
+			
+				
+				if(giter.hasNext()) {
+					move = true;
+//					path.bag			
 //					List list = new ArrayList(pathSet);
 //					Collections.reverse(list);
 //					pathSet = new LinkedHashSet(list);
 					
-					System.out.println(pathSet);
-					
-					giter = pathSet.iterator();
-					
-					
+					//System.out.println(pathSet);
+								
 					Pair<Integer,Pair<Integer,Integer>> cur = giter.next();
 					
 					System.out.println(cur);
 					
-			
+					holdIn("Move", 1);
 					int pri = cur.value.key - prev.value.key;
 					int sec = cur.value.value - prev.value.value;
 					if(pri == 0 && sec == 1) {
@@ -173,7 +156,8 @@ public class ControlUnit extends ViewableAtomic{
 						direction = "SouthWest";
 					}
 					else {
-						direction = "Start";
+						move = false;
+						holdIn("CheckDirt", 1);
 					}
 					prev = cur;
 					
@@ -184,8 +168,6 @@ public class ControlUnit extends ViewableAtomic{
 				
 			}
 			
-			
-			holdIn("Active", 1);
 			
 		}
 		
@@ -211,6 +193,10 @@ public class ControlUnit extends ViewableAtomic{
 		if(move) {
 			con = makeContent("Move", new entity(direction));
 			m.add(con);
+		}
+		if(getDirt) {
+			con = makeContent("askIR", new entity("Dust??"));
+			m.add(con);	
 		}
 		con = makeContent("Consumption", new doubleEnt(consumptionMetric));
 		m.add(con);

@@ -21,6 +21,7 @@ public class Wheel extends ViewableAtomic {
 		// TODO Auto-generated constructor stub
 		
 		addInport("In");
+		addOutport("Out");
 		addOutport("Consumption");
 		
 		this.consumptionMetric = consumption;
@@ -47,7 +48,7 @@ public class Wheel extends ViewableAtomic {
 	@Override
 	public void deltext(double e, message x) {
 		// TODO Auto-generated method stub
-		super.deltext(e, x);
+		//super.deltext(e, x);
 		Continue(e);
 		for(int i=0;i<x.getLength();i++) {
 			entity task = x.getValOnPort("In", i);
@@ -62,9 +63,10 @@ public class Wheel extends ViewableAtomic {
 		// TODO Auto-generated method stub
 		
 		message m = new message();
-		content con = makeContent("Out", new doubleEnt(consumptionMetric*2));
+		content con = makeContent("Consumption", new doubleEnt(consumptionMetric*2));
 		m.add(con);
-		
+		con = makeContent("Out", new entity("reached"));
+		m.add(con);
 		return m;
 	}
 

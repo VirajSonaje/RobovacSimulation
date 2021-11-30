@@ -40,17 +40,20 @@ public class Robovac extends ViewableDigraph{
 	    
 	    addCoupling(this, "Start", lidar, "Start");
 	    addCoupling(this, "Start", lidar, "Stop");
-	    addCoupling(this, "Start", IR, "Start");
-	    addCoupling(this, "Start", IR, "Stop");
+	    //addCoupling(this, "Start", IR, "Start");
+	    //addCoupling(this, "Start", IR, "Stop");
 	    addCoupling(lidar, "Out", CU, "LiDARin");
 	    addCoupling(IR, "Out", CU, "IRin");
 	    addCoupling(CU, "Clean", suction, "In");
 	    addCoupling(CU, "Move", wheeels, "In");
+	    addCoupling(CU, "askIR", IR, "Start");
 	    addCoupling(lidar, "Consumption", tx, "In");
 	    addCoupling(IR, "Consumption", tx, "In");
 	    addCoupling(CU, "Consumption", tx, "In");
 	    addCoupling(suction, "Consumption", tx, "In");
+	    addCoupling(suction, "Out", CU, "LiDARin");
 	    addCoupling(wheeels, "Consumption", tx, "In");
+	    addCoupling(wheeels, "Out", CU, "IRin");
 	    addCoupling(tx, "Out", this, "Result");
 		
 	}
