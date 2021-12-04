@@ -3,6 +3,7 @@ package Component.RobovacSimulation;
 import java.awt.Dimension;
 import java.awt.Point;
 
+import GenCol.Pair;
 import GenCol.entity;
 import view.modeling.ViewableAtomic;
 import view.modeling.ViewableComponent;
@@ -35,7 +36,7 @@ public class Robovac extends ViewableDigraph{
 		addInport("Start");
 		addOutport("Result");
 		
-	    addTestInput("Start",new entity("start"));
+	    addTestInput("Start",new Pair<Integer, Integer>(0, 0));
 	    addTestInput("Stop",new entity("stop"));
 	    
 	    addCoupling(this, "Start", lidar, "Start");

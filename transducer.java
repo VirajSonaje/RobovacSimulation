@@ -53,10 +53,10 @@ public class transducer extends ViewableAtomic {
 	@Override
 	public void deltint() {
 		// TODO Auto-generated method stub
-		super.deltint();
+		//super.deltint();
 		clock = clock + sigma;
 		passivate();
-		show_state();
+		//show_state();
 	
 	}
 	
@@ -85,8 +85,8 @@ public class transducer extends ViewableAtomic {
 	
 	public message out() {
 		message m = new message();
-		content con1 = makeContent("battery1", new entity("Consumption: "+b1.get("Consumption")));
-		content con2 = makeContent("battery2",new entity("Consumption: "+b2.get("Consumption")));
+		content con1 = makeContent("Out", new entity("Consumption: "+b1.get("Consumption")));
+		content con2 = makeContent("Out",new entity("Consumption: "+b2.get("Consumption")));
 		m.add(con1);
 		m.add(con2);
 		return m;

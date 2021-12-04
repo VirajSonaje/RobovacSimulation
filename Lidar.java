@@ -23,7 +23,7 @@ public class Lidar extends ViewableAtomic {
 	boolean visited[][] = new boolean[ROW][COL];
 	int M[][];
 	Queue<Pair<Integer, Integer>> path = new Queue<Pair<Integer, Integer>>();
-	Queue<Pair<Integer,Pair<Integer, Integer>>> pathf = new Queue<Pair<Integer,Pair<Integer, Integer>>>();
+	Bag<Pair<Integer,Pair<Integer, Integer>>> pathf = new Bag<Pair<Integer,Pair<Integer, Integer>>>();
 
 	public Lidar() {
 		this("LiDAR",20);
@@ -49,11 +49,11 @@ public class Lidar extends ViewableAtomic {
 	private void generateGrid() {
 		// TODO Auto-generated method stub
 		
-		M = new int[][] {{ 1, 1, 0, 0, 0 },
-						{ 0, 1, 0, 0, 1 },
-						{ 1, 1, 0, 1, 1 },
-						{ 1, 0, 0, 0, 0 },
-						{ 1, 1, 1, 1, 1 } };
+		M = new int[][] {{1, 0, 0, 0, 0 },
+						{ 1, 1, 1, 0, 0 },
+						{ 1, 0, 1, 0, 0 },
+						{ 1, 0, 0, 1, 0 },
+						{ 1, 1, 1, 0, 0 } };
 		
 	}
 	
@@ -118,12 +118,12 @@ public class Lidar extends ViewableAtomic {
 					holdIn("Active", 3);
 					getPath();
 					int l=0;
+					Collections.reverse(path);
 					for (Pair<Integer, Integer> pair : path) {
 						pathf.add(new Pair<Integer, Pair<Integer,Integer>>(l, pair));
 						l++;
 						
 					}
-					Collections.reverse(path);
 					System.out.println(path);
 				}
 			}
@@ -146,7 +146,7 @@ public class Lidar extends ViewableAtomic {
 		message m = new message();
 		content con = makeContent("Consumption", new doubleEnt(consumptionMetric*(5)));
 		m.add(con);
-		con = makeContent("Out", Bag.List2Bag(pathf));
+		con = makeContent("Out", pathf);
 		m.add(con);
 		
 		return m;

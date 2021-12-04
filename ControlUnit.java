@@ -1,11 +1,16 @@
 package Component.RobovacSimulation;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 import GenCol.Bag;
 import GenCol.Pair;
@@ -21,9 +26,10 @@ public class ControlUnit extends ViewableAtomic{
 	boolean suction =false, move =false, getDirt = false;
 	String direction = "";
 	int index =1;
-	Set<Pair<Integer,Pair<Integer, Integer>>> pathSet;
+	List<Pair<Integer,Pair<Integer, Integer>>> pathSet;
 	Iterator<Pair<Integer, Pair<Integer, Integer>>> giter;
 	Pair<Integer,Pair<Integer, Integer>> prev = new Pair<Integer,Pair<Integer, Integer>> (0,new Pair<Integer,Integer>(0, 0));
+	Boolean visited[][] = new Boolean[5][5];
 	
 	public ControlUnit() {
 		this("ECU", 50);
@@ -42,6 +48,12 @@ public class ControlUnit extends ViewableAtomic{
 		addOutport("Consumption");
 
 		this.consumptionMetric = consumption;
+		for (int i = 0; i < visited.length; i++) {
+			Boolean[] booleans = visited[i];
+			for (int j = 0; j < booleans.length; j++) {
+				booleans[j] = false;
+			}
+		}
 	}
 	
 	@Override
@@ -51,6 +63,7 @@ public class ControlUnit extends ViewableAtomic{
 		
 		sigma = INFINITY;
 		phase = "Passive";
+//		
 		
 	}
 
@@ -86,13 +99,20 @@ public class ControlUnit extends ViewableAtomic{
 		for(int i=0;i<x.getLength();i++) {
 			if(messageOnPort(x, "IRin", i)) {
 				String val = x.getValOnPort("IRin", i).getName();
-				if(val.startsWith("no")) {
+				if(val.equals("no dust")) {
 					suction = false;
 					move = true;
 				}
 				else if(val.equals("reached")){
-					getDirt = true;
-					holdIn("CheckDirt", 1);
+					if(visited[prev.value.key][prev.value.key]) {
+						move = true;
+					}
+					else {
+						getDirt = true;
+						holdIn("CheckDirt", 1);
+					}
+					
+					
 				}
 				else {
 					suction = true;
@@ -107,8 +127,14 @@ public class ControlUnit extends ViewableAtomic{
 				else if(!move) {
 					//System.out.println(x.getValOnPort("LiDARin", i));
 					Bag<Pair<Integer,Pair<Integer, Integer>>> path = (Bag<Pair<Integer,Pair<Integer, Integer>>> )x.getValOnPort("LiDARin", i);	
-					//System.out.println(path);
-					pathSet = path.bag2Set();
+					//pathSet = path.bag2Set();
+					pathSet = path.stream().sorted((cell1, cell2) -> Integer.compare(cell1.key, cell2.key)).collect(Collectors.toList());
+					for (Pair<Integer,Pair<Integer, Integer>> cell: pathSet) {
+//						pathSet.add(cell);
+						System.out.println(cell);
+					}
+					//pathSet = path.bag2Set();
+					//System.out.println(pathSet);
 					getDirt =true;
 					giter = pathSet.iterator();
 				}
@@ -125,8 +151,18 @@ public class ControlUnit extends ViewableAtomic{
 					//System.out.println(pathSet);
 								
 					Pair<Integer,Pair<Integer,Integer>> cur = giter.next();
+					if(!visited[cur.value.key][cur.value.value]) {
+						visited[cur.value.key][cur.value.value] = true;
+					}
+					//System.out.println(visited);
 					
-					System.out.println(cur);
+					for (int it = 0; it < visited.length; it++) {
+						Boolean[] booleans = visited[it];
+						for (int j = 0; j < booleans.length; j++) {
+							System.out.print(booleans[j]+" ");
+						}
+						System.out.println();
+					}
 					
 					holdIn("Move", 1);
 					int pri = cur.value.key - prev.value.key;
